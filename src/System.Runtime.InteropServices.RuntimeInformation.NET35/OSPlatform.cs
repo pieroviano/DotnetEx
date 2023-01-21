@@ -14,7 +14,7 @@ namespace System.Runtime.InteropServices
 
         internal string Name { get; }
 
-        private OSPlatform(string osPlatform!!)
+        private OSPlatform(string osPlatform)
         {
             if (osPlatform.Length == 0)
             {
