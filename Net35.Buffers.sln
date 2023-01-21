@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32802.440
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A1677C74-394B-412C-B250-6DD6A2F3AC61}"
 EndProject
@@ -14,6 +14,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net35.Buffers.Test.NET35", "tests\DotnetEx.Test.NET35\Net35.Buffers.Test.NET35.csproj", "{806A865E-2B45-42C7-B072-928EB218AF4C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net35.System.Runtime.InteropServices.RuntimeInformation", "src\System.Runtime.InteropServices.RuntimeInformation.NET35\Net35.System.Runtime.InteropServices.RuntimeInformation.csproj", "{1242C2E6-3FAF-4D0D-8827-739867521B06}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{23FCCF43-AA2B-4DA2-8739-F71DBCD9FFC8}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Directory.NuGet.props = Directory.NuGet.props
+		..\Nuget.Config = ..\Nuget.Config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

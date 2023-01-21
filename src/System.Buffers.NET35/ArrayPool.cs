@@ -46,7 +46,7 @@ namespace System.Buffers
             [MethodImpl((MethodImplOptions)256 /* AggressiveInlining */)]
             get
             {
-                return Volatile.Read(ref s_sharedInstance) ?? EnsureSharedCreated();
+                return /*Volatile.Read(ref s_sharedInstance) ??*/ EnsureSharedCreated();
             }
         }
 

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Authors>wherewhere</Authors>
-    <Copyright>Copyright © 2017 - 2022 wherewhere. All Rights Reserved.</Copyright>
+    <Copyright>Copyright (c) 2017 - 2022 wherewhere. All Rights Reserved.</Copyright>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <LangVersion>preview</LangVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
