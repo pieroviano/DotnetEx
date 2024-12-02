@@ -25222,5 +25222,185 @@
         "PackageReferences": null
       }
     ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\Win32Interop\\Win32Interop.nuget.sln",
+      "Version": "Win32InteropnugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.Win32Interop.User32",
+        "Project": "User32\\Win32Interop.User32.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.Win32Interop.Kernel32",
+        "Project": "Kernel32\\Win32Interop.Kernel32.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.Win32Interop.Gdi32",
+        "Project": "Gdi32\\Win32Interop.Gdi32.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.Win32Interop.Uxtheme",
+        "Project": "Uxtheme\\Win32Interop.Uxtheme.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.Win32Interop.Dwmapi",
+        "Project": "Dwmapi\\Win32Interop.Dwmapi.csproj",
+        "PackageReferences": null
+      }
+    ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\WhenTheVersion\\WhenTheVersion.nuget.sln",
+      "Version": "WhenTheVersionnugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.WhenTheVersion",
+        "Project": "WhenTheVersion\\WhenTheVersion.csproj",
+        "PackageReferences": null
+      }
+    ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\TouchLibrary\\TouchLibrary.nuget.sln",
+      "Version": "TouchLibrarynugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.TouchLibrary",
+        "Project": "TouchLibrary\\TouchLibrary.csproj",
+        "PackageReferences": null
+      }
+    ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\TopMostLibrary\\TopMostLibrary.nuget.sln",
+      "Version": "TopMostLibrarynugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.TopMostLibrary",
+        "Project": "TopMostLibrary\\TopMostLibrary.csproj",
+        "PackageReferences": null
+      }
+    ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\SqlParametersToVariableDefinitions\\SqlParametersToVariableDefinitions.nuget.sln",
+      "Version": "SqlParametersToVariableDefinitionsnugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.SqlParametersToVariableDefinitions",
+        "Project": "SqlParametersToVariableDefinitions\\SqlParametersToVariableDefinitions.csproj",
+        "PackageReferences": null
+      }
+    ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\PackAsTool\\PackAsTool.nuget.sln",
+      "Version": "PackAsToolnugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.PackAsTool",
+        "Project": "PackAsTool\\PackAsTool.csproj",
+        "PackageReferences": null
+      }
+    ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\PackAsLibrary\\PackAsLibrary.nuget.sln",
+      "Version": "PackAsLibrarynugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.PackAsLibrary",
+        "Project": "PackAsLibrary\\PackAsLibrary.csproj",
+        "PackageReferences": null
+      }
+    ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\Net4x.MSHTML\\Net4x.MSHTML.nuget.sln",
+      "Version": "Net4xMSHTMLnugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.Net35.MSHTML",
+        "Project": "Net4x.MSHTML.net35\\Net4x.Net35.MSHTML.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.Net40.MSHTML",
+        "Project": "Net4x.MSHTML.net40\\Net4x.Net40.MSHTML.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.Net45.MSHTML",
+        "Project": "Net4x.MSHTML.net45\\Net4x.Net45.MSHTML.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.Netcoreapp.MSHTML",
+        "Project": "Net4x.MSHTML.netcoreapp\\Net4x.Netcoreapp.MSHTML.csproj",
+        "PackageReferences": null
+      }
+    ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\Net4x.Configuration\\Net4x.Configuration.nuget.sln",
+      "Version": "Net4xConfigurationnugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.Configuration",
+        "Project": "Net4x.Configuration\\Net4x.Configuration.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.Data",
+        "Project": "Net4x.Data\\Net4x.Data.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.SqlClient",
+        "Project": "Net4x.SqlClient\\Net4x.SqlClient.csproj",
+        "PackageReferences": null
+      },
+      {
+        "Name": "Net4x.WindowsForms",
+        "Project": "Net4x.WindowsForms\\Net4x.WindowsForms.csproj",
+        "PackageReferences": null
+      }
+    ]
+  },
+  {
+    "Solution": {
+      "Path": "D:\\CommonLibrary\\Net4x.InternetExplorer\\Net4x.InternetExplorer.nuget.sln",
+      "Version": "Net4xInternetExplorernugetVersion"
+    },
+    "NuGetPackages": [
+      {
+        "Name": "Net4x.InternetExplorer",
+        "Project": "Net4x.InternetExplorer\\Net4x.InternetExplorer.csproj",
+        "PackageReferences": null
+      }
+    ]
   }
 ]
