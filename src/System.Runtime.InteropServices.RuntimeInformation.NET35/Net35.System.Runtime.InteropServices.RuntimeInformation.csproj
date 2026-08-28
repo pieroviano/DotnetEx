@@ -2,9 +2,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Version>$(VersionPrefix).$(VersionSuffix)</Version>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" />
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" />
+    <ItemGroup>
+        <None Include="README.md" Link="README.md" Pack="true" PackagePath="\README.md" />
+    </ItemGroup>
     <PropertyGroup>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Authors>wherewhere</Authors>

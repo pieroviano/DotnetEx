@@ -4,6 +4,12 @@
         <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     </PropertyGroup>
     <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" />
+    <PropertyGroup>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="README.md" Link="README.md" Pack="true" PackagePath="\README.md" />
+    </ItemGroup>
     <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" />
     <PropertyGroup>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
