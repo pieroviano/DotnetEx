@@ -1,10 +1,13 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+extern alias shim;
 
 using System;
 using System.Net;
 using System.Net.Sockets;
 
+using DnsEndPoint = shim::System.Net.DnsEndPoint;
 namespace Net35.MsCorLib.Tests
 {
     /// <summary>Tests for <see cref="DnsEndPoint"/>.</summary>

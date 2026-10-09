@@ -1,10 +1,14 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+extern alias shim;
 
 using System;
 using System.Diagnostics;
 using System.Threading;
 
+using SpinWait = shim::System.Threading.SpinWait;
+using Volatile = shim::System.Threading.Volatile;
 namespace Net35.MsCorLib.Tests
 {
     /// <summary>Tests for <see cref="SpinWait"/>.</summary>

@@ -1,9 +1,14 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+extern alias shim;
 
 using System;
 using System.Runtime.InteropServices;
 
+using RuntimeInformation = shim::System.Runtime.InteropServices.RuntimeInformation;
+using OSPlatform = shim::System.Runtime.InteropServices.OSPlatform;
+using Architecture = shim::System.Runtime.InteropServices.Architecture;
 namespace Net35.InteropServices.Tests
 {
     /// <summary>Tests for <see cref="RuntimeInformation"/>, <see cref="OSPlatform"/> and <see cref="Architecture"/>.</summary>

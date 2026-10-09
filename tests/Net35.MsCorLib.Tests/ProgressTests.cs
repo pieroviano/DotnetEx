@@ -1,10 +1,13 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+extern alias shim;
 
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
+using shimsys = shim::System;
 namespace Net35.MsCorLib.Tests
 {
     /// <summary>Tests for <see cref="Progress{T}"/> and <see cref="IProgress{T}"/>.</summary>
@@ -43,7 +46,7 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void Constructor_NullHandler_Throws()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new Progress<int>(null); });
+            Assert.Throws<ArgumentNullException>(delegate { new shimsys.Progress<int>(null); });
         }
 
         [Test]
@@ -52,9 +55,9 @@ namespace Net35.MsCorLib.Tests
             WithInlineContext(delegate (InlineSynchronizationContext context)
             {
                 int received = 0;
-                Progress<int> progress = new Progress<int>(delegate (int value) { received = value; });
+                shimsys.Progress<int> progress = new shimsys.Progress<int>(delegate (int value) { received = value; });
 
-                ((IProgress<int>)progress).Report(42);
+                ((shimsys.IProgress<int>)progress).Report(42);
 
                 Assert.AreEqual(42, received);
                 Assert.AreEqual(1, context.PostCount);
@@ -69,14 +72,14 @@ namespace Net35.MsCorLib.Tests
                 object sender = null;
                 int received = 0;
 
-                Progress<int> progress = new Progress<int>();
+                shimsys.Progress<int> progress = new shimsys.Progress<int>();
                 progress.ProgressChanged += delegate (object s, int value)
                 {
                     sender = s;
                     received = value;
                 };
 
-                ((IProgress<int>)progress).Report(7);
+                ((shimsys.IProgress<int>)progress).Report(7);
 
                 Assert.AreSame(progress, sender);
                 Assert.AreEqual(7, received);
@@ -90,10 +93,10 @@ namespace Net35.MsCorLib.Tests
             {
                 List<string> calls = new List<string>();
 
-                Progress<int> progress = new Progress<int>(delegate { calls.Add("handler"); });
+                shimsys.Progress<int> progress = new shimsys.Progress<int>(delegate { calls.Add("handler"); });
                 progress.ProgressChanged += delegate { calls.Add("event"); };
 
-                ((IProgress<int>)progress).Report(1);
+                ((shimsys.IProgress<int>)progress).Report(1);
 
                 CollectionAssert.AreEqual(new string[] { "handler", "event" }, calls);
             });
@@ -104,9 +107,9 @@ namespace Net35.MsCorLib.Tests
         {
             WithInlineContext(delegate (InlineSynchronizationContext context)
             {
-                Progress<int> progress = new Progress<int>();
+                shimsys.Progress<int> progress = new shimsys.Progress<int>();
 
-                ((IProgress<int>)progress).Report(1);
+                ((shimsys.IProgress<int>)progress).Report(1);
 
                 // OnReport short-circuits when there is nothing to call.
                 Assert.AreEqual(0, context.PostCount);
@@ -121,14 +124,14 @@ namespace Net35.MsCorLib.Tests
                 int eventCalls = 0;
                 int handlerCalls = 0;
 
-                Progress<int> progress = new Progress<int>(delegate { handlerCalls++; });
+                shimsys.Progress<int> progress = new shimsys.Progress<int>(delegate { handlerCalls++; });
                 EventHandlerEx<int> subscriber = delegate { eventCalls++; };
 
                 progress.ProgressChanged += subscriber;
-                ((IProgress<int>)progress).Report(1);
+                ((shimsys.IProgress<int>)progress).Report(1);
 
                 progress.ProgressChanged -= subscriber;
-                ((IProgress<int>)progress).Report(2);
+                ((shimsys.IProgress<int>)progress).Report(2);
 
                 Assert.AreEqual(1, eventCalls);
                 Assert.AreEqual(2, handlerCalls);
@@ -141,7 +144,7 @@ namespace Net35.MsCorLib.Tests
             WithInlineContext(delegate (InlineSynchronizationContext context)
             {
                 List<int> received = new List<int>();
-                IProgress<int> progress = new Progress<int>(delegate (int value) { received.Add(value); });
+                shimsys.IProgress<int> progress = new shimsys.Progress<int>(delegate (int value) { received.Add(value); });
 
                 progress.Report(1);
                 progress.Report(2);
@@ -159,7 +162,7 @@ namespace Net35.MsCorLib.Tests
                 string sent = "payload";
                 string received = null;
 
-                IProgress<string> progress = new Progress<string>(delegate (string value) { received = value; });
+                shimsys.IProgress<string> progress = new shimsys.Progress<string>(delegate (string value) { received = value; });
                 progress.Report(sent);
 
                 Assert.AreSame(sent, received);
@@ -179,7 +182,7 @@ namespace Net35.MsCorLib.Tests
                 {
                     int received = 0;
 
-                    IProgress<int> progress = new Progress<int>(delegate (int value)
+                    shimsys.IProgress<int> progress = new shimsys.Progress<int>(delegate (int value)
                     {
                         received = value;
                         signal.Set();
@@ -208,7 +211,7 @@ namespace Net35.MsCorLib.Tests
                 SynchronizationContext.SetSynchronizationContext(constructionContext);
 
                 int received = 0;
-                IProgress<int> progress = new Progress<int>(delegate (int value) { received = value; });
+                shimsys.IProgress<int> progress = new shimsys.Progress<int>(delegate (int value) { received = value; });
 
                 // Swap the ambient context after construction; the captured one must still be used.
                 InlineSynchronizationContext laterContext = new InlineSynchronizationContext();

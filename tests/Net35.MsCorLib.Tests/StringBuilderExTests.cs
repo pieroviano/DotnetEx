@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -15,7 +15,7 @@ namespace Net35.MsCorLib.Tests
         {
             StringBuilder builder = new StringBuilder("some content");
 
-            builder.Clear();
+            StringBuilderEx.Clear(builder);
 
             Assert.AreEqual(0, builder.Length);
             Assert.IsEmpty(builder.ToString());
@@ -26,8 +26,8 @@ namespace Net35.MsCorLib.Tests
         {
             StringBuilder builder = new StringBuilder("some content");
 
-            Assert.AreSame(builder, builder.Clear());
-            Assert.AreEqual("appended", builder.Clear().Append("appended").ToString());
+            Assert.AreSame(builder, StringBuilderEx.Clear(builder));
+            Assert.AreEqual("appended", StringBuilderEx.Clear(builder).Append("appended").ToString());
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace Net35.MsCorLib.Tests
         {
             StringBuilder builder = new StringBuilder();
 
-            Assert.DoesNotThrow(delegate { builder.Clear(); });
+            Assert.DoesNotThrow(delegate { StringBuilderEx.Clear(builder); });
             Assert.AreEqual(0, builder.Length);
         }
 
@@ -44,7 +44,7 @@ namespace Net35.MsCorLib.Tests
         {
             StringBuilder builder = new StringBuilder("first");
 
-            builder.Clear();
+            StringBuilderEx.Clear(builder);
             builder.Append("second");
 
             Assert.AreEqual("second", builder.ToString());
@@ -57,7 +57,7 @@ namespace Net35.MsCorLib.Tests
             builder.Append(new string('x', 200));
 
             int capacityBefore = builder.Capacity;
-            builder.Clear();
+            StringBuilderEx.Clear(builder);
 
             Assert.AreEqual(0, builder.Length);
             Assert.AreEqual(capacityBefore, builder.Capacity);
@@ -74,7 +74,7 @@ namespace Net35.MsCorLib.Tests
 
             Assert.AreEqual(10000, builder.Length);
 
-            builder.Clear();
+            StringBuilderEx.Clear(builder);
 
             Assert.AreEqual(0, builder.Length);
         }

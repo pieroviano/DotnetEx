@@ -1,10 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net35</TargetFramework>
+		<TargetFramework>net48</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<NoWarn>CS0649;NUnit2005;CS8602;CS8618</NoWarn>
 	</PropertyGroup>
 
@@ -14,8 +16,14 @@
 		<PackageReference Include="NUnit" Version="2.6.1" />
 	</ItemGroup>
 
+	<!-- The library under test is only built for net3.5-client. Bind that assembly directly
+	     (a ProjectReference would be a cross-TFM negotiation) and alias it so its shims can
+	     be named explicitly where the net48 BCL defines the same type. -->
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\mscorlib.NET35\Net35.MsCorlib.csproj" />
+		<Reference Include="Net35.MsCorlib" Aliases="global,shim">
+			<HintPath>..\..\src\mscorlib.NET35\bin\$(Configuration)\net3.5-client\Net35.MsCorlib.dll</HintPath>
+			<Private>true</Private>
+		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>

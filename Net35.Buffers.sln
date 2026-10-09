@@ -22,10 +22,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net35.MsCorLib.Tests", "tests\Net35.MsCorLib.Tests\Net35.MsCorLib.Tests.csproj", "{C698855C-3F6E-DA15-FA15-FA50ACC35BDB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{59F1D291-102B-4D69-B6DD-B321376AE6E3} = {59F1D291-102B-4D69-B6DD-B321376AE6E3}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net35.System.Buffers.Tests", "tests\Net35.System.Buffers.Tests\Net35.System.Buffers.Tests.csproj", "{AD69A1EC-874E-CD04-CC19-B87CB2169968}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1A281C1F-D3B1-44B9-BFFA-DC5C74DEA7A7} = {1A281C1F-D3B1-44B9-BFFA-DC5C74DEA7A7}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net35.System.Runtime.InteropServices.RuntimeInformation.Tests", "tests\Net35.System.Runtime.InteropServices.RuntimeInformation.Tests\Net35.System.Runtime.InteropServices.RuntimeInformation.Tests.csproj", "{4AC282A0-8153-E8F3-2A7A-397EBC29BE1F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1242C2E6-3FAF-4D0D-8827-739867521B06} = {1242C2E6-3FAF-4D0D-8827-739867521B06}
+		{59F1D291-102B-4D69-B6DD-B321376AE6E3} = {59F1D291-102B-4D69-B6DD-B321376AE6E3}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

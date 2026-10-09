@@ -1,10 +1,13 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
+extern alias shim;
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
+using shimcol = shim::System.Collections.Generic;
 namespace Net35.MsCorLib.Tests
 {
     /// <summary>
@@ -15,7 +18,7 @@ namespace Net35.MsCorLib.Tests
     public sealed class ReadOnlyCollectionInterfaceTests
     {
         /// <summary>A read-only list view over an array.</summary>
-        private sealed class ReadOnlyArray<T> : IReadOnlyList<T>
+        private sealed class ReadOnlyArray<T> : shimcol.IReadOnlyList<T>
         {
             private readonly T[] _items;
 
@@ -49,7 +52,7 @@ namespace Net35.MsCorLib.Tests
         }
 
         /// <summary>A read-only dictionary view over a <see cref="Dictionary{TKey,TValue}"/>.</summary>
-        private sealed class ReadOnlyMap<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>
+        private sealed class ReadOnlyMap<TKey, TValue> : shimcol.IReadOnlyDictionary<TKey, TValue>
         {
             private readonly Dictionary<TKey, TValue> _items;
 
@@ -100,7 +103,7 @@ namespace Net35.MsCorLib.Tests
         }
 
         /// <summary>A read-only set view over a list, implementing the full set-relation contract.</summary>
-        private sealed class ReadOnlyBag<T> : IReadOnlySet<T>
+        private sealed class ReadOnlyBag<T> : shimcol.IReadOnlySet<T>
         {
             private readonly List<T> _items;
 
@@ -210,7 +213,7 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlyCollection_ExposesCountAndEnumerates()
         {
-            IReadOnlyCollection<int> collection = new ReadOnlyArray<int>(new int[] { 1, 2, 3 });
+            shimcol.IReadOnlyCollection<int> collection = new ReadOnlyArray<int>(new int[] { 1, 2, 3 });
 
             Assert.AreEqual(3, collection.Count);
             CollectionAssert.AreEqual(new int[] { 1, 2, 3 }, collection);
@@ -219,7 +222,7 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlyCollection_CanBeEmpty()
         {
-            IReadOnlyCollection<int> collection = new ReadOnlyArray<int>(new int[0]);
+            shimcol.IReadOnlyCollection<int> collection = new ReadOnlyArray<int>(new int[0]);
 
             Assert.AreEqual(0, collection.Count);
             CollectionAssert.AreEqual(new int[0], collection);
@@ -228,7 +231,7 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlyList_ExposesTheIndexer()
         {
-            IReadOnlyList<string> list = new ReadOnlyArray<string>(new string[] { "a", "b", "c" });
+            shimcol.IReadOnlyList<string> list = new ReadOnlyArray<string>(new string[] { "a", "b", "c" });
 
             Assert.AreEqual("a", list[0]);
             Assert.AreEqual("c", list[2]);
@@ -238,7 +241,7 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlyList_IndexerOutOfRange_Throws()
         {
-            IReadOnlyList<string> list = new ReadOnlyArray<string>(new string[] { "a" });
+            shimcol.IReadOnlyList<string> list = new ReadOnlyArray<string>(new string[] { "a" });
 
             // The interface leaves the failure mode to the implementation; this one indexes an array.
             Assert.Throws<IndexOutOfRangeException>(delegate { GC.KeepAlive(list[5]); });
@@ -247,9 +250,9 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlyList_IsAlsoAReadOnlyCollection()
         {
-            IReadOnlyList<int> list = new ReadOnlyArray<int>(new int[] { 1 });
+            shimcol.IReadOnlyList<int> list = new ReadOnlyArray<int>(new int[] { 1 });
 
-            Assert.IsTrue(list is IReadOnlyCollection<int>);
+            Assert.IsTrue(list is shimcol.IReadOnlyCollection<int>);
             Assert.IsTrue(list is IEnumerable<int>);
         }
 
@@ -260,7 +263,7 @@ namespace Net35.MsCorLib.Tests
             backing.Add("one", 1);
             backing.Add("two", 2);
 
-            IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
+            shimcol.IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
 
             Assert.AreEqual(2, map.Count);
             Assert.AreEqual(1, map["one"]);
@@ -274,7 +277,7 @@ namespace Net35.MsCorLib.Tests
             Dictionary<string, int> backing = new Dictionary<string, int>();
             backing.Add("one", 1);
 
-            IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
+            shimcol.IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
 
             int found;
             Assert.IsTrue(map.TryGetValue("one", out found));
@@ -292,7 +295,7 @@ namespace Net35.MsCorLib.Tests
             backing.Add("one", 1);
             backing.Add("two", 2);
 
-            IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
+            shimcol.IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
 
             CollectionAssert.AreEqual(new string[] { "one", "two" }, map.Keys);
             CollectionAssert.AreEqual(new int[] { 1, 2 }, map.Values);
@@ -304,7 +307,7 @@ namespace Net35.MsCorLib.Tests
             Dictionary<string, int> backing = new Dictionary<string, int>();
             backing.Add("one", 1);
 
-            IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
+            shimcol.IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
 
             List<KeyValuePair<string, int>> pairs = new List<KeyValuePair<string, int>>(map);
 
@@ -316,7 +319,7 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlySet_Contains()
         {
-            IReadOnlySet<int> set = new ReadOnlyBag<int>(1, 2, 3);
+            shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1, 2, 3);
 
             Assert.IsTrue(set.Contains(2));
             Assert.IsFalse(set.Contains(9));
@@ -326,7 +329,7 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlySet_SubsetAndSupersetRelations()
         {
-            IReadOnlySet<int> set = new ReadOnlyBag<int>(1, 2);
+            shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1, 2);
 
             Assert.IsTrue(set.IsSubsetOf(new int[] { 1, 2, 3 }));
             Assert.IsTrue(set.IsSubsetOf(new int[] { 1, 2 }));
@@ -343,7 +346,7 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlySet_OverlapsAndSetEquals()
         {
-            IReadOnlySet<int> set = new ReadOnlyBag<int>(1, 2);
+            shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1, 2);
 
             Assert.IsTrue(set.Overlaps(new int[] { 2, 5 }));
             Assert.IsFalse(set.Overlaps(new int[] { 7, 8 }));
@@ -355,7 +358,7 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlySet_NullOther_Throws()
         {
-            IReadOnlySet<int> set = new ReadOnlyBag<int>(1);
+            shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1);
 
             Assert.Throws<ArgumentNullException>(delegate { set.IsSubsetOf(null); });
             Assert.Throws<ArgumentNullException>(delegate { set.Overlaps(null); });
@@ -365,9 +368,9 @@ namespace Net35.MsCorLib.Tests
         [Test]
         public void ReadOnlySet_IsAlsoAReadOnlyCollection()
         {
-            IReadOnlySet<int> set = new ReadOnlyBag<int>(1);
+            shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1);
 
-            Assert.IsTrue(set is IReadOnlyCollection<int>);
+            Assert.IsTrue(set is shimcol.IReadOnlyCollection<int>);
             CollectionAssert.AreEqual(new int[] { 1 }, set);
         }
     }
