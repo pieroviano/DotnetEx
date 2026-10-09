@@ -17,34 +17,55 @@ Three shipping projects, all in `src/`:
 | `System.Buffers.NET35/Net35.System.Buffers.csproj` | `Net35.Buffers` | `System.Buffers.ArrayPool<T>` (no ETW logging) |
 | `System.Runtime.InteropServices.RuntimeInformation.NET35/Net35.System.Runtime.InteropServices.RuntimeInformation.csproj` | `Net35.Runtime.InteropServices.RuntimeInformation` | `RuntimeInformation`, `OSPlatform`, `Architecture` |
 
-Each library has an NUnit test project beside it at the repository root - note these sit at the
-root, **not** under `tests/`:
+Each library has an xUnit test project under `tests/`:
 
 | Test project | Covers | Tests |
 |---|---|---|
-| `Net35.MsCorLib.Tests/` | `Net35.MsCorlib` | 154 |
-| `Net35.System.Buffers.Tests/` | `Net35.Buffers` | 25 |
-| `Net35.System.Runtime.InteropServices.RuntimeInformation.Tests/` | `Net35.Runtime.InteropServices.RuntimeInformation` | 20 |
+| `tests/Net35.MsCorLib.Tests/` | `Net35.MsCorlib` | 154 |
+| `tests/Net35.System.Buffers.Tests/` | `Net35.Buffers` | 25 |
+| `tests/Net35.System.Runtime.InteropServices.RuntimeInformation.Tests/` | `Net35.Runtime.InteropServices.RuntimeInformation` | 20 |
 
-`tests/DotnetEx.Test.NET35/` is the original console `Exe` smoke test (`Program.cs`). It ends in
-`Console.ReadKey()`, so never run it in a non-interactive shell.
+### The test projects target net48 but test the net3.5-client assemblies
+
+xUnit and the VSTest adapter have no `net35` assets, so the suites target **net48** while still
+compiling and running against the libraries' `net3.5-client` output. Each one therefore has
+**no `ProjectReference`** - it binds the built assembly directly:
+
+```xml
+<Reference Include="Net35.MsCorlib" Aliases="global,shim">
+  <HintPath>..\..\src\mscorlib.NET35\bin\$(Configuration)\net3.5-client\Net35.MsCorlib.dll</HintPath>
+  <Private>true</Private>
+</Reference>
+```
+
+Consequences worth knowing before editing a test project:
+
+- **Transitive libraries must be named explicitly.** A bare `Reference` carries no project graph, so
+  the RuntimeInformation suite lists `Net35.MsCorlib` as well. A missing one is a run-time
+  `FileNotFoundException`, not a build error.
+- **Build order comes from the `.sln`.** A `HintPath` carries none, so each test project has a
+  `ProjectSection(ProjectDependencies)` naming the libraries it binds. Keep it in sync.
+- **Keep `$(Configuration)` in the `HintPath`** so a Release build picks up the Release assembly.
+- **`GenerateTargetFrameworkAttribute` is `false`**, and `IsTestProject` is `true`.
+- Every shim type that net48 also defines is named through the `shim` alias, so the test exercises the
+  backport. See *Test conventions* below.
 
 ## Two parallel csproj sets — read before editing project files
 
 Each `src/` directory contains **two .csproj files for the same sources**:
 
-- `Net35.*.csproj` / `Net35.Buffers.Test.NET35.csproj` → referenced by **`Net35.Buffers.sln`**. This is
+- `Net35.*.csproj` → referenced by **`Net35.Buffers.sln`**, the only solution in the repo. This is
   the active fork: packable, versioned from `Directory.Build.Props`, uses `Net4x.NuGetUtility`.
-- `Polyfill.*.csproj` / `DotnetEx.Test.NET35.csproj` → referenced by the legacy **`DotnetEx.sln`**
-  (upstream layout, also carries the `*.NET40` projects). Not maintained here.
+- `Polyfill.*.csproj` → the legacy upstream layout (`DotnetEx.sln`, which is no longer checked in).
+  Left on disk, referenced by nothing, not maintained here.
 
 Work against `Net35.Buffers.sln` and the `Net35.*` csproj unless told otherwise. Because two
 project files share a directory, **never run a build/restore by pointing at a folder** — it is
 ambiguous. Always name the `.sln` or the specific `.csproj`.
 
-`src/mscorlib.NET40/`, `src/System.Buffers.NET40/`,
-`src/System.Runtime.InteropServices.RuntimeInformation.NET40/` and `tests/DotnetEx.Test.NET40/`
-are legacy NET40 siblings, **not** part of `Net35.Buffers.sln`.
+`src/mscorlib.NET40/`, `src/System.Buffers.NET40/` and
+`src/System.Runtime.InteropServices.RuntimeInformation.NET40/` are legacy NET40 siblings, **not**
+part of `Net35.Buffers.sln`.
 
 ## Building
 
@@ -113,39 +134,48 @@ those settings (which include Obfuscar on Release builds). Don't "fix" the condi
 
 ## Verifying a change
 
-1. Build `Net35.Buffers.sln` with desktop MSBuild (above).
-2. Run the three NUnit suites. **`dotnet test` does not run them**: the test projects target `net35`,
-   and VSTest silently executes nothing for a `net35` assembly - it prints `Build succeeded` and no
-   test run at all, so a green `dotnet test` here means nothing was executed. There is also no test
-   adapter in the projects (`NUnit` 2.6.1 alone provides none), and `coverlet.collector` is a VSTest
-   data collector, so it cannot produce coverage for these targets either.
-
-   Use the NUnit 2.x console runner against the built assemblies:
+1. Build `Net35.Buffers.sln` with desktop MSBuild (above). `dotnet build` still cannot build the
+   libraries (ResGen), so build first, then run the tests with `--no-build`.
+2. Run the three xUnit suites. Since they target `net48`, the adapter works and so does coverage:
 
 ```bash
-RUNNER=~/.nuget/packages/nunit.runners/2.7.0/tools/nunit-console.exe
-"$RUNNER" Net35.MsCorLib.Tests/bin/Debug/net35/Net35.MsCorLib.Tests.dll -nologo -noshadow
+dotnet test Net35.Buffers.sln --no-build -c Debug
 ```
 
-   (In Git Bash pass options with `-`, not `/` - MSYS rewrites `/nologo` into a path.)
+   Or VSTest directly against a built assembly:
 
-   To make `dotnet test` and coverage work, the projects would need NUnit 3.14 plus
-   `NUnit3TestAdapter`, which is exactly what the repo owner's own `Net4x.NunitTests` package pins for
-   `.NETFramework3.5`. The tests are written against the classic assertion API
-   (`Assert.AreEqual`/`IsTrue`/`Throws<T>`, `StringAssert`, `CollectionAssert`) so they compile
-   unchanged on both NUnit 2.6.1 and NUnit 3.x.
+```bash
+VSTEST="/c/Program Files/Microsoft Visual Studio/18/Enterprise/Common7/IDE/Extensions/TestPlatform/vstest.console.exe"
+"$VSTEST" tests/Net35.MsCorLib.Tests/bin/Debug/net48/Net35.MsCorLib.Tests.dll
+```
 
-3. The old `DotnetEx.Test.NET35` smoke test still exists; it blocks on `Console.ReadKey()`, so run it
-   only in an interactive terminal (`! <path>` in Claude Code).
+   199 tests, all passing: 154 + 25 + 20, 0 skipped on Windows. A runner reporting *zero* tests with
+   exit code 0 is a broken run, not a pass.
+
+   (In Git Bash pass runner options with `-`, not `/` - MSYS rewrites `/nologo` into a path. Quoted
+   heredocs also collapse `\\`, so write throwaway scripts to a file rather than piping them in.)
 
 ### Test conventions
 
-- Namespaces avoid segments that shadow the type under test. `Net35.RuntimeInformation.Tests` makes
-  `RuntimeInformation.OSDescription` resolve to the *namespace*, not the class, so the
+- **Namespaces avoid segments that shadow the type under test.** `Net35.RuntimeInformation.Tests`
+  makes `RuntimeInformation.OSDescription` resolve to the *namespace*, not the class, so the
   RuntimeInformation suite uses `Net35.InteropServices.Tests`. Watch for this when adding a project.
-- Windows-only tests call a local `RequireWindows()` helper that invokes `Assert.Ignore`, rather than
-  failing off-platform.
+- **A shim type that net48 also defines is named through the `shim` alias**, otherwise the test
+  silently exercises the BCL. `extern alias shim;` at the top of the file, then either a type alias
+  (`using Volatile = shim::System.Threading.Volatile;`, which needs no call-site change) or, for a
+  generic - C# cannot alias an open generic - a namespace alias plus qualified sites
+  (`shimcol.IReadOnlyList<T>`). This covers `DnsEndPoint`, `SpinWait`, `Volatile`, `IProgress`,
+  `Progress`, `IReadOnly*`, `RuntimeInformation`, `OSPlatform` and `Architecture`. Note the compiler
+  does **not** always report the collision, so after a change confirm the binding by disassembly
+  (`ildasm /out=… /nobar`) and check the typeref says `[Net35.MsCorlib]`, not `[mscorlib]`.
+- **A backported extension method whose name matches a real net48 instance member must be called in
+  static form.** `StringBuilderEx.Clear(builder)`, never `builder.Clear()` - the instance member
+  always wins, so the implicit call never reaches the shim. An extension *property* with a BCL
+  namesake is unreachable on net48 altogether; only an old-TFM test project could cover one.
+- **Windows-only tests carry `[WindowsOnlyFact]`**, a `FactAttribute` subclass that sets `Skip` when
+  the platform is not Windows. xUnit 2.x cannot skip from inside a test body, so there is no
+  `Assert.Ignore` equivalent to call. There is one copy per test project, deliberately.
 - Several tests deliberately pin *incorrect* behaviour that the polyfills currently ship (notably the
   transposed `paramName`/`message` arguments in every `ArgumentNullExceptionEx` constructor). They
-  carry a `[Description]` saying so. If you fix the underlying defect, update the paired test rather
-  than assuming the suite has regressed.
+  carry a `[Trait("Description", …)]` saying so. If you fix the underlying defect, update the paired
+  test rather than assuming the suite has regressed.
