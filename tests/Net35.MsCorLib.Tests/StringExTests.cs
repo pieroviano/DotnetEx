@@ -1,13 +1,10 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-
 using System;
 using System.Collections.Generic;
 
 namespace Net35.MsCorLib.Tests
 {
-    /// <summary>Tests for <see cref="StringEx"/> (String.Join overloads and IsNullOrWhiteSpace).</summary>
-    [TestFixture]
     public sealed class StringExTests
     {
         private sealed class BrokenToString
@@ -18,127 +15,130 @@ namespace Net35.MsCorLib.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void JoinObjects_ConcatenatesWithTheSeparator()
         {
-            Assert.AreEqual("1, 2, 3", StringEx.Join(", ", new object[] { 1, 2, 3 }));
+            Assert.Equal("1, 2, 3", StringEx.Join(", ", new object[] { 1, 2, 3 }));
         }
 
-        [Test]
+        [Fact]
         public void JoinObjects_WithASingleValue_OmitsTheSeparator()
         {
-            Assert.AreEqual("only", StringEx.Join(", ", new object[] { "only" }));
+            Assert.Equal("only", StringEx.Join(", ", new object[] { "only" }));
         }
 
-        [Test]
+        [Fact]
         public void JoinObjects_WithNullSeparator_JoinsWithNothing()
         {
-            Assert.AreEqual("abc", StringEx.Join(null, new object[] { "a", "b", "c" }));
+            Assert.Equal("abc", StringEx.Join(null, new object[] { "a", "b", "c" }));
         }
 
-        [Test]
+        [Fact]
         public void JoinObjects_WithNoValues_ReturnsEmpty()
         {
-            Assert.IsEmpty(StringEx.Join(", ", new object[0]));
+            Assert.Empty(StringEx.Join(", ", new object[0]));
         }
 
-        [Test]
+        [Fact]
         public void JoinObjects_WithNullValues_Throws()
         {
-            Assert.Throws<ArgumentNullException>(delegate { StringEx.Join(", ", (object[])null); });
+            Assert.Throws<ArgumentNullException>(delegate
+            {
+                StringEx.Join(", ", (object[])null);
+            });
         }
 
-        [Test]
+        [Fact]
         public void JoinObjects_SkipsNullEntriesButKeepsTheirSeparator()
         {
-            Assert.AreEqual("a, , c", StringEx.Join(", ", new object[] { "a", null, "c" }));
+            Assert.Equal("a, , c", StringEx.Join(", ", new object[] { "a", null, "c" }));
         }
 
-        [Test, Description("Documents a divergence from string.Join in the BCL, which would return \", b\".")]
+        [Fact, Trait("Description", "Documents a divergence from string.Join in the BCL, which would return \", b\".")]
         public void JoinObjects_WithNullFirstEntry_ReturnsEmpty()
         {
             // StringEx.Join short-circuits when values[0] is null, unlike the BCL overload.
-            Assert.IsEmpty(StringEx.Join(", ", new object[] { null, "b" }));
+            Assert.Empty(StringEx.Join(", ", new object[] { null, "b" }));
         }
 
-        [Test]
+        [Fact]
         public void JoinObjects_ToleratesAToStringThatReturnsNull()
         {
-            Assert.AreEqual("a, , c", StringEx.Join(", ", new object[] { "a", new BrokenToString(), "c" }));
+            Assert.Equal("a, , c", StringEx.Join(", ", new object[] { "a", new BrokenToString(), "c" }));
         }
 
-        [Test]
+        [Fact]
         public void JoinGeneric_ConcatenatesWithTheSeparator()
         {
             List<int> values = new List<int>(new int[] { 10, 20, 30 });
-
-            Assert.AreEqual("10-20-30", StringEx.Join<int>("-", values));
+            Assert.Equal("10-20-30", StringEx.Join<int>("-", values));
         }
 
-        [Test]
+        [Fact]
         public void JoinGeneric_WithAnEmptySequence_ReturnsEmpty()
         {
-            Assert.IsEmpty(StringEx.Join<int>("-", new List<int>()));
+            Assert.Empty(StringEx.Join<int>("-", new List<int>()));
         }
 
-        [Test]
+        [Fact]
         public void JoinGeneric_WithNullSeparator_JoinsWithNothing()
         {
-            Assert.AreEqual("123", StringEx.Join<int>(null, new List<int>(new int[] { 1, 2, 3 })));
+            Assert.Equal("123", StringEx.Join<int>(null, new List<int>(new int[] { 1, 2, 3 })));
         }
 
-        [Test]
+        [Fact]
         public void JoinGeneric_WithNullValues_Throws()
         {
-            Assert.Throws<ArgumentNullException>(delegate { StringEx.Join<int>("-", (IEnumerable<int>)null); });
+            Assert.Throws<ArgumentNullException>(delegate
+            {
+                StringEx.Join<int>("-", (IEnumerable<int>)null);
+            });
         }
 
-        [Test]
+        [Fact]
         public void JoinGeneric_SkipsNullEntriesButKeepsTheirSeparator()
         {
             List<string> values = new List<string>(new string[] { "a", null, "c" });
-
-            Assert.AreEqual("a||c", StringEx.Join<string>("|", values));
+            Assert.Equal("a||c", StringEx.Join<string>("|", values));
         }
 
-        [Test]
+        [Fact]
         public void JoinGeneric_WithANullFirstEntry_StillEmitsTheRest()
         {
             List<string> values = new List<string>(new string[] { null, "b" });
-
-            // Unlike the object[] overload, the generic one does not short-circuit on a null head.
-            Assert.AreEqual("|b", StringEx.Join<string>("|", values));
+            Assert.Equal("|b", StringEx.Join<string>("|", values));
         }
 
-        [Test]
+        [Fact]
         public void JoinStrings_ConcatenatesWithTheSeparator()
         {
             IEnumerable<string> values = new List<string>(new string[] { "x", "y", "z" });
-
-            Assert.AreEqual("x/y/z", StringEx.Join("/", values));
+            Assert.Equal("x/y/z", StringEx.Join("/", values));
         }
 
-        [Test]
+        [Fact]
         public void JoinStrings_WithAnEmptySequence_ReturnsEmpty()
         {
-            Assert.IsEmpty(StringEx.Join("/", (IEnumerable<string>)new List<string>()));
+            Assert.Empty(StringEx.Join("/", (IEnumerable<string>)new List<string>()));
         }
 
-        [Test]
+        [Fact]
         public void JoinStrings_WithNullValues_Throws()
         {
-            Assert.Throws<ArgumentNullException>(delegate { StringEx.Join("/", (IEnumerable<string>)null); });
+            Assert.Throws<ArgumentNullException>(delegate
+            {
+                StringEx.Join("/", (IEnumerable<string>)null);
+            });
         }
 
-        [Test]
+        [Fact]
         public void JoinStrings_WithANullFirstEntry_StillEmitsTheRest()
         {
             IEnumerable<string> values = new List<string>(new string[] { null, "b" });
-
-            Assert.AreEqual("/b", StringEx.Join("/", values));
+            Assert.Equal("/b", StringEx.Join("/", values));
         }
 
-        [Test]
+        [Fact]
         public void Join_LongInputExceedsTheCachedBuilder()
         {
             // Longer than StringBuilderCache's 360-char ceiling, so the builder is not recycled.
@@ -149,45 +149,44 @@ namespace Net35.MsCorLib.Tests
             }
 
             string joined = StringEx.Join(",", (IEnumerable<string>)values);
-
-            Assert.AreEqual((200 * 10) + 199, joined.Length);
+            Assert.Equal((200 * 10) + 199, joined.Length);
         }
 
-        [Test]
+        [Fact]
         public void Join_IsReusableAcrossCalls()
         {
             // Exercises the StringBuilderCache acquire/release cycle more than once on the same thread.
             for (int i = 0; i < 5; i++)
             {
-                Assert.AreEqual("a,b", StringEx.Join(",", (IEnumerable<string>)new List<string>(new string[] { "a", "b" })));
+                Assert.Equal("a,b", StringEx.Join(",", (IEnumerable<string>)new List<string>(new string[] { "a", "b" })));
             }
         }
 
-        [Test]
+        [Fact]
         public void IsNullOrWhiteSpace_NullIsTrue()
         {
-            Assert.IsTrue(StringEx.IsNullOrWhiteSpace(null));
+            Assert.True(StringEx.IsNullOrWhiteSpace(null));
         }
 
-        [Test]
+        [Fact]
         public void IsNullOrWhiteSpace_EmptyIsTrue()
         {
-            Assert.IsTrue(StringEx.IsNullOrWhiteSpace(string.Empty));
+            Assert.True(StringEx.IsNullOrWhiteSpace(string.Empty));
         }
 
-        [Test]
+        [Fact]
         public void IsNullOrWhiteSpace_WhitespaceIsTrue()
         {
-            Assert.IsTrue(StringEx.IsNullOrWhiteSpace(" "));
-            Assert.IsTrue(StringEx.IsNullOrWhiteSpace("\t\r\n "));
+            Assert.True(StringEx.IsNullOrWhiteSpace(" "));
+            Assert.True(StringEx.IsNullOrWhiteSpace("\t\r\n "));
         }
 
-        [Test]
+        [Fact]
         public void IsNullOrWhiteSpace_TextIsFalse()
         {
-            Assert.IsFalse(StringEx.IsNullOrWhiteSpace("a"));
-            Assert.IsFalse(StringEx.IsNullOrWhiteSpace("  a  "));
-            Assert.IsFalse(StringEx.IsNullOrWhiteSpace("\t.\t"));
+            Assert.False(StringEx.IsNullOrWhiteSpace("a"));
+            Assert.False(StringEx.IsNullOrWhiteSpace("  a  "));
+            Assert.False(StringEx.IsNullOrWhiteSpace("\t.\t"));
         }
     }
 }

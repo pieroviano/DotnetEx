@@ -1,27 +1,20 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-
 extern alias shim;
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using shimcol = shim::System.Collections.Generic;
+
 namespace Net35.MsCorLib.Tests
 {
-    /// <summary>
-    /// Tests for the read-only collection interfaces. They carry no implementation, so what is
-    /// verified is that the declared contracts are implementable and dispatch correctly.
-    /// </summary>
-    [TestFixture]
     public sealed class ReadOnlyCollectionInterfaceTests
     {
         /// <summary>A read-only list view over an array.</summary>
         private sealed class ReadOnlyArray<T> : shimcol.IReadOnlyList<T>
         {
             private readonly T[] _items;
-
             public ReadOnlyArray(T[] items)
             {
                 _items = items;
@@ -29,12 +22,18 @@ namespace Net35.MsCorLib.Tests
 
             public int Count
             {
-                get { return _items.Length; }
+                get
+                {
+                    return _items.Length;
+                }
             }
 
             public T this[int index]
             {
-                get { return _items[index]; }
+                get
+                {
+                    return _items[index];
+                }
             }
 
             public IEnumerator<T> GetEnumerator()
@@ -51,11 +50,10 @@ namespace Net35.MsCorLib.Tests
             }
         }
 
-        /// <summary>A read-only dictionary view over a <see cref="Dictionary{TKey,TValue}"/>.</summary>
+        /// <summary>A read-only dictionary view over a <see cref = "Dictionary{TKey, TValue}"/>.</summary>
         private sealed class ReadOnlyMap<TKey, TValue> : shimcol.IReadOnlyDictionary<TKey, TValue>
         {
             private readonly Dictionary<TKey, TValue> _items;
-
             public ReadOnlyMap(Dictionary<TKey, TValue> items)
             {
                 _items = items;
@@ -63,22 +61,34 @@ namespace Net35.MsCorLib.Tests
 
             public int Count
             {
-                get { return _items.Count; }
+                get
+                {
+                    return _items.Count;
+                }
             }
 
             public TValue this[TKey key]
             {
-                get { return _items[key]; }
+                get
+                {
+                    return _items[key];
+                }
             }
 
             public IEnumerable<TKey> Keys
             {
-                get { return _items.Keys; }
+                get
+                {
+                    return _items.Keys;
+                }
             }
 
             public IEnumerable<TValue> Values
             {
-                get { return _items.Values; }
+                get
+                {
+                    return _items.Values;
+                }
             }
 
             public bool ContainsKey(TKey key)
@@ -106,7 +116,6 @@ namespace Net35.MsCorLib.Tests
         private sealed class ReadOnlyBag<T> : shimcol.IReadOnlySet<T>
         {
             private readonly List<T> _items;
-
             public ReadOnlyBag(params T[] items)
             {
                 _items = new List<T>(items);
@@ -114,7 +123,10 @@ namespace Net35.MsCorLib.Tests
 
             public int Count
             {
-                get { return _items.Count; }
+                get
+                {
+                    return _items.Count;
+                }
             }
 
             public bool Contains(T item)
@@ -210,168 +222,157 @@ namespace Net35.MsCorLib.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlyCollection_ExposesCountAndEnumerates()
         {
             shimcol.IReadOnlyCollection<int> collection = new ReadOnlyArray<int>(new int[] { 1, 2, 3 });
-
-            Assert.AreEqual(3, collection.Count);
-            CollectionAssert.AreEqual(new int[] { 1, 2, 3 }, collection);
+            Assert.Equal(3, collection.Count);
+            Assert.Equal(new int[] { 1, 2, 3 }, collection);
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlyCollection_CanBeEmpty()
         {
             shimcol.IReadOnlyCollection<int> collection = new ReadOnlyArray<int>(new int[0]);
-
-            Assert.AreEqual(0, collection.Count);
-            CollectionAssert.AreEqual(new int[0], collection);
+            Assert.Equal(0, collection.Count);
+            Assert.Equal(new int[0], collection);
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlyList_ExposesTheIndexer()
         {
             shimcol.IReadOnlyList<string> list = new ReadOnlyArray<string>(new string[] { "a", "b", "c" });
-
-            Assert.AreEqual("a", list[0]);
-            Assert.AreEqual("c", list[2]);
-            Assert.AreEqual(3, list.Count);
+            Assert.Equal("a", list[0]);
+            Assert.Equal("c", list[2]);
+            Assert.Equal(3, list.Count);
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlyList_IndexerOutOfRange_Throws()
         {
             shimcol.IReadOnlyList<string> list = new ReadOnlyArray<string>(new string[] { "a" });
-
             // The interface leaves the failure mode to the implementation; this one indexes an array.
-            Assert.Throws<IndexOutOfRangeException>(delegate { GC.KeepAlive(list[5]); });
+            Assert.Throws<IndexOutOfRangeException>(delegate
+            {
+                GC.KeepAlive(list[5]);
+            });
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlyList_IsAlsoAReadOnlyCollection()
         {
             shimcol.IReadOnlyList<int> list = new ReadOnlyArray<int>(new int[] { 1 });
-
-            Assert.IsTrue(list is shimcol.IReadOnlyCollection<int>);
-            Assert.IsTrue(list is IEnumerable<int>);
+            Assert.True(list is shimcol.IReadOnlyCollection<int>);
+            Assert.True(list is IEnumerable<int>);
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlyDictionary_LooksUpByKey()
         {
             Dictionary<string, int> backing = new Dictionary<string, int>();
             backing.Add("one", 1);
             backing.Add("two", 2);
-
             shimcol.IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
-
-            Assert.AreEqual(2, map.Count);
-            Assert.AreEqual(1, map["one"]);
-            Assert.IsTrue(map.ContainsKey("two"));
-            Assert.IsFalse(map.ContainsKey("three"));
+            Assert.Equal(2, map.Count);
+            Assert.Equal(1, map["one"]);
+            Assert.True(map.ContainsKey("two"));
+            Assert.False(map.ContainsKey("three"));
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlyDictionary_TryGetValue()
         {
             Dictionary<string, int> backing = new Dictionary<string, int>();
             backing.Add("one", 1);
-
             shimcol.IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
-
             int found;
-            Assert.IsTrue(map.TryGetValue("one", out found));
-            Assert.AreEqual(1, found);
-
+            Assert.True(map.TryGetValue("one", out found));
+            Assert.Equal(1, found);
             int missing;
-            Assert.IsFalse(map.TryGetValue("nope", out missing));
-            Assert.AreEqual(0, missing);
+            Assert.False(map.TryGetValue("nope", out missing));
+            Assert.Equal(0, missing);
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlyDictionary_ExposesKeysAndValues()
         {
             Dictionary<string, int> backing = new Dictionary<string, int>();
             backing.Add("one", 1);
             backing.Add("two", 2);
-
             shimcol.IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
-
-            CollectionAssert.AreEqual(new string[] { "one", "two" }, map.Keys);
-            CollectionAssert.AreEqual(new int[] { 1, 2 }, map.Values);
+            Assert.Equal(new string[] { "one", "two" }, map.Keys);
+            Assert.Equal(new int[] { 1, 2 }, map.Values);
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlyDictionary_EnumeratesKeyValuePairs()
         {
             Dictionary<string, int> backing = new Dictionary<string, int>();
             backing.Add("one", 1);
-
             shimcol.IReadOnlyDictionary<string, int> map = new ReadOnlyMap<string, int>(backing);
-
             List<KeyValuePair<string, int>> pairs = new List<KeyValuePair<string, int>>(map);
-
-            Assert.AreEqual(1, pairs.Count);
-            Assert.AreEqual("one", pairs[0].Key);
-            Assert.AreEqual(1, pairs[0].Value);
+            Assert.Equal(1, pairs.Count);
+            Assert.Equal("one", pairs[0].Key);
+            Assert.Equal(1, pairs[0].Value);
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlySet_Contains()
         {
             shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1, 2, 3);
-
-            Assert.IsTrue(set.Contains(2));
-            Assert.IsFalse(set.Contains(9));
-            Assert.AreEqual(3, set.Count);
+            Assert.True(set.Contains(2));
+            Assert.False(set.Contains(9));
+            Assert.Equal(3, set.Count);
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlySet_SubsetAndSupersetRelations()
         {
             shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1, 2);
-
-            Assert.IsTrue(set.IsSubsetOf(new int[] { 1, 2, 3 }));
-            Assert.IsTrue(set.IsSubsetOf(new int[] { 1, 2 }));
-            Assert.IsFalse(set.IsSubsetOf(new int[] { 1 }));
-
-            Assert.IsTrue(set.IsProperSubsetOf(new int[] { 1, 2, 3 }));
-            Assert.IsFalse(set.IsProperSubsetOf(new int[] { 1, 2 }));
-
-            Assert.IsTrue(set.IsSupersetOf(new int[] { 1 }));
-            Assert.IsTrue(set.IsProperSupersetOf(new int[] { 1 }));
-            Assert.IsFalse(set.IsProperSupersetOf(new int[] { 1, 2 }));
+            Assert.True(set.IsSubsetOf(new int[] { 1, 2, 3 }));
+            Assert.True(set.IsSubsetOf(new int[] { 1, 2 }));
+            Assert.False(set.IsSubsetOf(new int[] { 1 }));
+            Assert.True(set.IsProperSubsetOf(new int[] { 1, 2, 3 }));
+            Assert.False(set.IsProperSubsetOf(new int[] { 1, 2 }));
+            Assert.True(set.IsSupersetOf(new int[] { 1 }));
+            Assert.True(set.IsProperSupersetOf(new int[] { 1 }));
+            Assert.False(set.IsProperSupersetOf(new int[] { 1, 2 }));
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlySet_OverlapsAndSetEquals()
         {
             shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1, 2);
-
-            Assert.IsTrue(set.Overlaps(new int[] { 2, 5 }));
-            Assert.IsFalse(set.Overlaps(new int[] { 7, 8 }));
-
-            Assert.IsTrue(set.SetEquals(new int[] { 2, 1 }));
-            Assert.IsFalse(set.SetEquals(new int[] { 1 }));
+            Assert.True(set.Overlaps(new int[] { 2, 5 }));
+            Assert.False(set.Overlaps(new int[] { 7, 8 }));
+            Assert.True(set.SetEquals(new int[] { 2, 1 }));
+            Assert.False(set.SetEquals(new int[] { 1 }));
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlySet_NullOther_Throws()
         {
             shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1);
-
-            Assert.Throws<ArgumentNullException>(delegate { set.IsSubsetOf(null); });
-            Assert.Throws<ArgumentNullException>(delegate { set.Overlaps(null); });
-            Assert.Throws<ArgumentNullException>(delegate { set.SetEquals(null); });
+            Assert.Throws<ArgumentNullException>(delegate
+            {
+                set.IsSubsetOf(null);
+            });
+            Assert.Throws<ArgumentNullException>(delegate
+            {
+                set.Overlaps(null);
+            });
+            Assert.Throws<ArgumentNullException>(delegate
+            {
+                set.SetEquals(null);
+            });
         }
 
-        [Test]
+        [Fact]
         public void ReadOnlySet_IsAlsoAReadOnlyCollection()
         {
             shimcol.IReadOnlySet<int> set = new ReadOnlyBag<int>(1);
-
-            Assert.IsTrue(set is shimcol.IReadOnlyCollection<int>);
-            CollectionAssert.AreEqual(new int[] { 1 }, set);
+            Assert.True(set is shimcol.IReadOnlyCollection<int>);
+            Assert.Equal(new int[] { 1 }, set);
         }
     }
 }

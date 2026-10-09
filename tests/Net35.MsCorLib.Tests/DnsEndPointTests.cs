@@ -1,149 +1,152 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-
 extern alias shim;
 
 using System;
 using System.Net;
 using System.Net.Sockets;
-
 using DnsEndPoint = shim::System.Net.DnsEndPoint;
+
 namespace Net35.MsCorLib.Tests
 {
-    /// <summary>Tests for <see cref="DnsEndPoint"/>.</summary>
-    [TestFixture]
     public sealed class DnsEndPointTests
     {
-        [Test]
+        [Fact]
         public void Constructor_ExposesHostPortAndUnspecifiedFamily()
         {
             DnsEndPoint endPoint = new DnsEndPoint("example.com", 443);
-
-            Assert.AreEqual("example.com", endPoint.Host);
-            Assert.AreEqual(443, endPoint.Port);
-            Assert.AreEqual(AddressFamily.Unspecified, endPoint.AddressFamily);
+            Assert.Equal("example.com", endPoint.Host);
+            Assert.Equal(443, endPoint.Port);
+            Assert.Equal(AddressFamily.Unspecified, endPoint.AddressFamily);
         }
 
-        [Test]
+        [Fact]
         public void Constructor_WithAnExplicitAddressFamily_KeepsIt()
         {
             DnsEndPoint endPoint = new DnsEndPoint("example.com", 443, AddressFamily.InterNetworkV6);
-
-            Assert.AreEqual(AddressFamily.InterNetworkV6, endPoint.AddressFamily);
+            Assert.Equal(AddressFamily.InterNetworkV6, endPoint.AddressFamily);
         }
 
-        [Test]
+        [Fact]
         public void Constructor_NullHost_Throws()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new DnsEndPoint(null, 80); });
+            Assert.Throws<ArgumentNullException>(delegate
+            {
+                new DnsEndPoint(null, 80);
+            });
         }
 
-        [Test]
+        [Fact]
         public void Constructor_AcceptsTheFullPortRange()
         {
-            Assert.AreEqual(IPEndPoint.MinPort, new DnsEndPoint("host", IPEndPoint.MinPort).Port);
-            Assert.AreEqual(IPEndPoint.MaxPort, new DnsEndPoint("host", IPEndPoint.MaxPort).Port);
+            Assert.Equal(IPEndPoint.MinPort, new DnsEndPoint("host", IPEndPoint.MinPort).Port);
+            Assert.Equal(IPEndPoint.MaxPort, new DnsEndPoint("host", IPEndPoint.MaxPort).Port);
         }
 
-        [Test]
+        [Fact]
         public void Constructor_PortOutOfRange_Throws()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(delegate { new DnsEndPoint("host", IPEndPoint.MinPort - 1); });
-            Assert.Throws<ArgumentOutOfRangeException>(delegate { new DnsEndPoint("host", IPEndPoint.MaxPort + 1); });
+            Assert.Throws<ArgumentOutOfRangeException>(delegate
+            {
+                new DnsEndPoint("host", IPEndPoint.MinPort - 1);
+            });
+            Assert.Throws<ArgumentOutOfRangeException>(delegate
+            {
+                new DnsEndPoint("host", IPEndPoint.MaxPort + 1);
+            });
         }
 
-        [Test]
+        [Fact]
         public void Constructor_UnsupportedAddressFamily_Throws()
         {
-            Assert.Throws<ArgumentException>(delegate { new DnsEndPoint("host", 80, AddressFamily.AppleTalk); });
-            Assert.Throws<ArgumentException>(delegate { new DnsEndPoint("host", 80, AddressFamily.Ipx); });
+            Assert.Throws<ArgumentException>(delegate
+            {
+                new DnsEndPoint("host", 80, AddressFamily.AppleTalk);
+            });
+            Assert.Throws<ArgumentException>(delegate
+            {
+                new DnsEndPoint("host", 80, AddressFamily.Ipx);
+            });
         }
 
-        [Test]
+        [Fact]
         public void Constructor_AcceptsAnEmptyHost()
         {
             // Only null is rejected; an empty host is passed through unchanged.
-            Assert.IsEmpty(new DnsEndPoint(string.Empty, 80).Host);
+            Assert.Empty(new DnsEndPoint(string.Empty, 80).Host);
         }
 
-        [Test]
+        [Fact]
         public void ToString_CombinesFamilyHostAndPort()
         {
-            Assert.AreEqual("Unspecified/example.com:443", new DnsEndPoint("example.com", 443).ToString());
-            Assert.AreEqual("InterNetwork/example.com:80", new DnsEndPoint("example.com", 80, AddressFamily.InterNetwork).ToString());
+            Assert.Equal("Unspecified/example.com:443", new DnsEndPoint("example.com", 443).ToString());
+            Assert.Equal("InterNetwork/example.com:80", new DnsEndPoint("example.com", 80, AddressFamily.InterNetwork).ToString());
         }
 
-        [Test]
+        [Fact]
         public void Equals_IsTrueForIdenticalEndPoints()
         {
             DnsEndPoint left = new DnsEndPoint("example.com", 443, AddressFamily.InterNetwork);
             DnsEndPoint right = new DnsEndPoint("example.com", 443, AddressFamily.InterNetwork);
-
-            Assert.IsTrue(left.Equals(right));
-            Assert.IsTrue(right.Equals(left));
+            Assert.True(left.Equals(right));
+            Assert.True(right.Equals(left));
         }
 
-        [Test]
+        [Fact]
         public void Equals_IsFalseWhenAnyComponentDiffers()
         {
             DnsEndPoint baseline = new DnsEndPoint("example.com", 443, AddressFamily.InterNetwork);
-
-            Assert.IsFalse(baseline.Equals(new DnsEndPoint("other.com", 443, AddressFamily.InterNetwork)), "host");
-            Assert.IsFalse(baseline.Equals(new DnsEndPoint("example.com", 80, AddressFamily.InterNetwork)), "port");
-            Assert.IsFalse(baseline.Equals(new DnsEndPoint("example.com", 443, AddressFamily.InterNetworkV6)), "family");
+            Assert.False(baseline.Equals(new DnsEndPoint("other.com", 443, AddressFamily.InterNetwork)), "host");
+            Assert.False(baseline.Equals(new DnsEndPoint("example.com", 80, AddressFamily.InterNetwork)), "port");
+            Assert.False(baseline.Equals(new DnsEndPoint("example.com", 443, AddressFamily.InterNetworkV6)), "family");
         }
 
-        [Test]
+        [Fact]
         public void Equals_HostComparisonIsCaseSensitive()
         {
             DnsEndPoint lower = new DnsEndPoint("example.com", 443);
             DnsEndPoint upper = new DnsEndPoint("EXAMPLE.COM", 443);
-
-            Assert.IsFalse(lower.Equals(upper));
+            Assert.False(lower.Equals(upper));
         }
 
-        [Test]
+        [Fact]
         public void Equals_IsFalseForNullAndForOtherTypes()
         {
             DnsEndPoint endPoint = new DnsEndPoint("example.com", 443);
-
-            Assert.IsFalse(endPoint.Equals(null));
-            Assert.IsFalse(endPoint.Equals("example.com"));
-            Assert.IsFalse(endPoint.Equals(new object()));
+            Assert.False(endPoint.Equals(null));
+            Assert.False(endPoint.Equals("example.com"));
+            Assert.False(endPoint.Equals(new object ()));
         }
 
-        [Test]
+        [Fact]
         public void GetHashCode_IsEqualForEqualEndPoints()
         {
             DnsEndPoint left = new DnsEndPoint("example.com", 443, AddressFamily.InterNetwork);
             DnsEndPoint right = new DnsEndPoint("example.com", 443, AddressFamily.InterNetwork);
-
-            Assert.AreEqual(left.GetHashCode(), right.GetHashCode());
+            Assert.Equal(left.GetHashCode(), right.GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void GetHashCode_IsStableAcrossCalls()
         {
             DnsEndPoint endPoint = new DnsEndPoint("example.com", 443);
-
-            Assert.AreEqual(endPoint.GetHashCode(), endPoint.GetHashCode());
+            Assert.Equal(endPoint.GetHashCode(), endPoint.GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void GetHashCode_IgnoresHostCasingEvenThoughEqualsDoesNot()
         {
             // The hash is computed over the case-insensitive form of ToString(), matching the BCL type.
             DnsEndPoint lower = new DnsEndPoint("example.com", 443);
             DnsEndPoint upper = new DnsEndPoint("EXAMPLE.COM", 443);
-
-            Assert.AreEqual(lower.GetHashCode(), upper.GetHashCode());
-            Assert.IsFalse(lower.Equals(upper));
+            Assert.Equal(lower.GetHashCode(), upper.GetHashCode());
+            Assert.False(lower.Equals(upper));
         }
 
-        [Test]
+        [Fact]
         public void IsAnEndPoint()
         {
-            Assert.IsTrue(new DnsEndPoint("example.com", 443) is EndPoint);
+            Assert.True(new DnsEndPoint("example.com", 443) is EndPoint);
         }
     }
 }

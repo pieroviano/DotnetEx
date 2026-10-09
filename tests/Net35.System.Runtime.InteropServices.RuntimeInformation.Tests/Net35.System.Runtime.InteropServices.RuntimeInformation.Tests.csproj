@@ -1,36 +1,32 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net48</TargetFramework>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-		<IsTestProject>true</IsTestProject>
-		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-		<NoWarn>CS0649;NUnit2005;CS8602;CS8618</NoWarn>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="coverlet.collector" Version="6.0.4" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
-		<PackageReference Include="NUnit" Version="2.6.1" />
-	</ItemGroup>
-
-	<!-- Net35.MsCorlib is the transitive dependency of the library under test; a bare Reference
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <NoWarn>CS0649;CS8602;CS8618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+  <!-- Net35.MsCorlib is the transitive dependency of the library under test; a bare Reference
 	     carries no NuGet/project graph, so it has to be named (and copied) explicitly. -->
-	<ItemGroup>
-		<Reference Include="Net35.Runtime.InteropServices.RuntimeInformation" Aliases="global,shim">
-			<HintPath>..\..\src\System.Runtime.InteropServices.RuntimeInformation.NET35\bin\$(Configuration)\net3.5-client\Net35.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-			<Private>true</Private>
-		</Reference>
-		<Reference Include="Net35.MsCorlib" Aliases="global,shim">
-			<HintPath>..\..\src\mscorlib.NET35\bin\$(Configuration)\net3.5-client\Net35.MsCorlib.dll</HintPath>
-			<Private>true</Private>
-		</Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Using Include="NUnit.Framework" />
-	</ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="Net35.Runtime.InteropServices.RuntimeInformation" Aliases="global,shim">
+      <HintPath>..\..\src\System.Runtime.InteropServices.RuntimeInformation.NET35\bin\$(Configuration)\net3.5-client\Net35.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Net35.MsCorlib" Aliases="global,shim">
+      <HintPath>..\..\src\mscorlib.NET35\bin\$(Configuration)\net3.5-client\Net35.MsCorlib.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
 </Project>
